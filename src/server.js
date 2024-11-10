@@ -1,38 +1,44 @@
-import express from "express"
-import myDate from "../date.js"
-import getURL from "../getURL.js"
-import viewengine from "../viewEngine.js"
-import dotenv from "dotenv/config"
-
-
+import express from 'express'
+import dotenv from 'dotenv/config'
+// import myDateTime from './public/date.js';
+// import getURL from './public/getURL.js';
+import viewEngine from './config/viewEngine.js';
+import webRouters from './routers/web.js'
+import staticFiles from './config/staticFiles.js';
+import useBootstrap from './config/bootstrapIcon.js';
+import bodyParser from 'body-parser'
+const path = require('path')
 
 const app = express()
 
-viewengine(app);
+
+// cau hinh ejs
+viewEngine(app)
+
+// cau hinh static file
+staticFiles(app)
+
+// su dung bootstrap
+useBootstrap(app)
+
+// su dung req.body
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const port = process.env.PORT
-app.get('/', (req, res) => {
-    res.send('Hello Anh Vũ. Anh đẹp trai quá')
-})
 
-app.get('/date', (req, res) => {
-    res.send(myDate() + "<br>")
-})
 
-app.get('/getURL', (req, res) => {
-    var getPath = getURL.getPath(req)
-    var getParams = getURL.getParamsURL(req)
-    res.send("Đường dẫn: " + getPath + "<br>" + "Giá trị truy vấn: " + getParams)
-})
+app.use('/', webRouters)
 
-app.get('/home', (req, res) => {
-    res.render("home")
-})
 
-app.get('/about', (req, res) => {
-    res.render("about")
-})
+
+
+
+
+
+
+
 
 app.listen(port, () => {
-    console.log(`Exemple app listening on port ${port}`)
+    console.log(`Example app listening on port ${port}`)
 })
